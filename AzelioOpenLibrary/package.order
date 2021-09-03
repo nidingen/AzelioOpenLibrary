@@ -1,7 +1,11 @@
 PowerCycleModels
 LossModels
+ThermalModels
 ElectricalModels
 OpticalModels
+WindTurbines
+Gensets
 Tests
 Icons
-ThermalModels
+Utilities
+EnergyStorage
