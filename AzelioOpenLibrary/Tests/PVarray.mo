@@ -3,23 +3,23 @@ within AzelioOpenLibrary.Tests;
 model PVarray
   extends AzelioOpenLibrary.Icons.ExampleIcon;
   Modelica.Blocks.Sources.RealExpression Hourly_input(y = time / 3600) annotation(Placement(visible = true, transformation(origin = {-127.5, 0}, extent = {{-12.5, -10}, {12.5, 10}}, rotation = 0)));
-  AzelioOpenLibrary.ElectricalModels.PVarray PV_(Lat = 31.03, Tracking = true, I_SC = 6.39, alpha_SC = 0.00085, NOCT = 44.5 + 273.15, shad = 0, soil = 0, mism = 0, cab = 0, eta_ref = 0.215) annotation(Placement(visible = true, transformation(origin = {19.891, 0.109}, extent = {{-40.109, -40.109}, {40.109, 40.109}}, rotation = 0)));
+  AzelioOpenLibrary.ElectricalModels.PVarray PV(Lat = 31.03, Tracking = true, I_SC = 6.39, alpha_SC = 0.00085, NOCT = 44.5 + 273.15, shad = 0, soil = 0, mism = 0, cab = 0, eta_ref = 0.215) annotation(Placement(visible = true, transformation(origin = {19.891, 0.109}, extent = {{-40.109, -40.109}, {40.109, 40.109}}, rotation = 0)));
   Modelica.Blocks.Tables.CombiTable1Ds TMY(tableOnFile = true, tableName = "TMY", fileName = "TMY_2005.txt", columns = 2:9) annotation(Placement(visible = true, transformation(origin = {-93.467, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
   AzelioOpenLibrary.Utilities.Radians_Conv Angle_Converter annotation(Placement(visible = true, transformation(origin = {-47.5, -17.5}, extent = {{-12.5, -12.5}, {12.5, 12.5}}, rotation = 0)));
-  AzelioOpenLibrary.ElectricalModels.GenericInverter Inverter_ annotation(Placement(visible = true, transformation(origin = {90, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  AzelioOpenLibrary.ElectricalModels.GenericInverter Inverter annotation(Placement(visible = true, transformation(origin = {90, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
 equation
   connect(Hourly_input.y, TMY.u) annotation(Line(visible = true, origin = {-109.608, 0}, points = {{-4.142, 0}, {4.141, 0}}, color = {1, 37, 163}));
-  connect(TMY.y[1], PV_.G_GHI) annotation(Line(visible = true, origin = {-60.671, 16.098}, points = {{-21.796, -16.098}, {-9.329, -16.098}, {-9.329, 20.109}, {40.453, 20.109}}, color = {1, 37, 163}));
-  connect(TMY.y[2], PV_.G_DHI) annotation(Line(visible = true, origin = {-60.671, 10.082}, points = {{-21.796, -10.082}, {-9.329, -10.082}, {-9.329, 14.092}, {40.453, 14.092}}, color = {1, 37, 163}));
-  connect(TMY.y[3], PV_.G_DNI) annotation(Line(visible = true, origin = {-60.671, 4.065}, points = {{-21.796, -4.065}, {-9.329, -4.065}, {-9.329, 8.077}, {40.453, 8.077}}, color = {1, 37, 163}));
-  connect(TMY.y[4], PV_.T_Amb) annotation(Line(visible = true, origin = {-60.671, -3.957}, points = {{-21.796, 3.957}, {40.453, 4.066}}, color = {1, 37, 163}));
+  connect(TMY.y[1], PV.G_GHI) annotation(Line(visible = true, origin = {-60.671, 16.098}, points = {{-21.796, -16.098}, {-9.329, -16.098}, {-9.329, 20.109}, {40.453, 20.109}}, color = {1, 37, 163}));
+  connect(TMY.y[2], PV.G_DHI) annotation(Line(visible = true, origin = {-60.671, 10.082}, points = {{-21.796, -10.082}, {-9.329, -10.082}, {-9.329, 14.092}, {40.453, 14.092}}, color = {1, 37, 163}));
+  connect(TMY.y[3], PV.G_DNI) annotation(Line(visible = true, origin = {-60.671, 4.065}, points = {{-21.796, -4.065}, {-9.329, -4.065}, {-9.329, 8.077}, {40.453, 8.077}}, color = {1, 37, 163}));
+  connect(TMY.y[4], PV.T_Amb) annotation(Line(visible = true, origin = {-60.671, -3.957}, points = {{-21.796, 3.957}, {40.453, 4.066}}, color = {1, 37, 163}));
   connect(TMY.y[5], Angle_Converter.Sun_Elev_deg) annotation(Line(visible = true, origin = {-71.554, -9.375}, points = {{-10.913, 9.375}, {1.554, 9.375}, {1.554, -1.875}, {12.804, -1.875}}, color = {1, 37, 163}));
-  connect(Angle_Converter.Sun_Azim_rad, PV_.Sun_Azim) annotation(Line(visible = true, origin = {-25.439, -31.614}, points = {{-9.561, 7.864}, {5.221, 7.658}}, color = {1, 37, 163}));
   connect(TMY.y[6], Angle_Converter.Sun_Azim_deg) annotation(Line(visible = true, origin = {-86.554, -34.375}, points = {{4.087, 34.375}, {16.554, 34.375}, {16.554, 10.625}, {27.804, 10.625}}, color = {1, 37, 163}));
-  connect(Angle_Converter.Sun_Elev_rad, PV_.Sun_Elev) annotation(Line(visible = true, origin = {-25.439, -19.348}, points = {{-9.561, 8.098}, {5.221, 7.424}}, color = {1, 37, 163}));
-  connect(TMY.y[8], PV_.w) annotation(Line(visible = true, origin = {-60.671, -17.995}, points = {{-21.796, 17.995}, {-9.329, 17.995}, {-9.329, -17.995}, {40.453, -17.994}}, color = {1, 37, 163}));
-  connect(PV_.P_DC, Inverter_.P_DC) annotation(Line(visible = true, origin = {73.494, 0.054}, points = {{-13.494, 0.054}, {3.494, 0.054}, {3.494, -0.054}, {6.506, -0.054}}, color = {1, 37, 163}));
-  connect(PV_.P_nom1, Inverter_.P_nom) annotation(Line(visible = true, origin = {80, 16.776}, points = {{-20, 3.388}, {10, 3.388}, {10, -6.776}}, color = {1, 37, 163}));
+  connect(Angle_Converter.Sun_Elev_rad, PV.Sun_Elev) annotation(Line(visible = true, origin = {-25.439, -19.348}, points = {{-9.561, 8.098}, {5.221, 7.424}}, color = {1, 37, 163}));
+  connect(TMY.y[8], PV.w) annotation(Line(visible = true, origin = {-60.671, -17.995}, points = {{-21.796, 17.995}, {-9.329, 17.995}, {-9.329, -17.994}, {40.453, -17.994}}, color = {1, 37, 163}));
+  connect(PV.P_DC, Inverter.Pin) annotation(Line(visible = true, origin = {73.494, 0.054}, points = {{-13.494, 0.055}, {3.494, 0.055}, {3.494, -0.054}, {6.506, -0.054}}, color = {1, 37, 163}));
+  connect(PV.P_nom1, Inverter.Pnom1) annotation(Line(visible = true, origin = {67.5, 12.685}, points = {{-7.5, 7.478}, {-2.5, 7.478}, {-2.5, -7.478}, {12.5, -7.478}}, color = {1, 37, 163}));
+  connect(Angle_Converter.Sun_Azim_rad, PV.Sun_Azim2) annotation(Line(visible = true, origin = {-28.804, -23.853}, points = {{-6.195, 0.103}, {-1.195, 0.103}, {-1.195, -0.103}, {8.586, -0.103}}, color = {1, 37, 163}));
   annotation(experiment(StopTime = 31536000, NumberOfIntervals = 8760, __Wolfram_Algorithm = "cvodes", Tolerance = 1e-10, __Wolfram_SynchronizeWithRealTime = false), Icon(coordinateSystem(extent = {{-100, -100}, {100, 100}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10, 10})), Documentation(info = "<p>This model simulates the power output <em>P<sub>AC&nbsp;</sub></em>(W)&nbsp;and energy yield <em>E<sub>AC</sub></em> (J)&nbsp;of a solar park, based on NREL SAM procedure [1], using the following TMY data for a given location, when latitude and elevation above sea level <em>EASL</em> (m)&nbsp;are known:</p>
 <ul>
 <li>Global Horizontal Irradiance <em>G<sub>GHI</sub></em> (W/m<sup>2</sup>);</li>
