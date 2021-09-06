@@ -1,0 +1,46 @@
+within AzelioOpenLibrary.OpticalModels;
+
+model ParabolicDish
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b fluxToReceiver_port "Flux delivered to receiver" annotation(Placement(visible = true, transformation(origin = {148.154, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {99.767, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Thermal.HeatTransfer.Interfaces.HeatPort_b fluxToWall_port "Flux deliverd to cavity wall" annotation(Placement(visible = true, transformation(origin = {148.154, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, -50}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Interfaces.RealInput DNI "DNI input" annotation(Placement(visible = true, transformation(origin = {-155, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-100, 0}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
+  parameter Modelica.SIunits.Area DishApertureArea = 56.55 "Dish aperture area";
+  parameter Modelica.SIunits.ReflectionCoefficient Reflectivity = 0.955 "Mirror reflectivity";
+  parameter Real ApertureIntercept = 0.971 "Aperture intercept factor";
+  parameter Real ReceiverIntercept = 0.817 "Receiver intercept factor";
+  parameter Real soilingConstant = 0.04 "Soiling constant";
+  parameter Real shadingConstant = 0.02 "Shading constant";
+  Modelica.Blocks.Math.Gain DishArea(k = DishApertureArea) annotation(Placement(visible = true, transformation(origin = {-120, -0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Gain RecieverHit(k = ReceiverIntercept) annotation(Placement(visible = true, transformation(origin = {70, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Gain WallHit(k = ApertureIntercept - ReceiverIntercept) annotation(Placement(visible = true, transformation(origin = {70, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow ReceiverFlux annotation(Placement(visible = true, transformation(origin = {110, -0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Thermal.HeatTransfer.Sources.PrescribedHeatFlow WallFlux annotation(Placement(visible = true, transformation(origin = {110, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Gain MirrorReflectivity(k = Reflectivity) annotation(Placement(visible = true, transformation(origin = {-90, -0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Product product1 annotation(Placement(visible = true, transformation(origin = {-50, 0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Product product2 annotation(Placement(visible = true, transformation(origin = {-10, -0}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Add soilingAdd(k2 = +1, k1 = -1) annotation(Placement(visible = true, transformation(origin = {-70, -39}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Math.Add shadingAdd(k2 = -1, k1 = +1) annotation(Placement(visible = true, transformation(origin = {-70, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.Constant const(k = 1) annotation(Placement(visible = true, transformation(origin = {-100, -59}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.Constant soilingConst(k = soilingConstant) annotation(Placement(visible = true, transformation(origin = {-130, -40}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.Blocks.Sources.Constant shadingConst(k = shadingConstant) annotation(Placement(visible = true, transformation(origin = {-130, -80}, extent = {{-10, -10}, {10, 10}}, rotation = 0)));
+  Modelica.SIunits.Energy Etodish;
+equation
+  der(Etodish) = DishArea.y;
+  connect(RecieverHit.u, WallHit.u) annotation(Line(visible = true, origin = {56.5, -20}, points = {{1.5, 20}, {-1.5, 20}, {-1.5, -20}, {1.5, -20}}, color = {0, 0, 127}));
+  connect(product2.y, RecieverHit.u) annotation(Line(visible = true, origin = {29.5, 0}, points = {{-28.5, 0}, {28.5, 0}}, color = {0, 0, 127}));
+  connect(DNI, DishArea.u) annotation(Line(visible = true, origin = {-143.5, -0}, points = {{-11.5, 0}, {11.5, -0}}, color = {0, 0, 127}));
+  connect(shadingAdd.y, product2.u2) annotation(Line(visible = true, origin = {-47.75, -43}, points = {{-11.25, -37}, {12.75, -37}, {12.75, 37}, {25.75, 37}}, color = {0, 0, 127}));
+  connect(product1.y, product2.u1) annotation(Line(visible = true, origin = {-27.75, 3}, points = {{-11.25, -3}, {2.75, -3}, {2.75, 3}, {5.75, 3}}, color = {0, 0, 127}));
+  connect(MirrorReflectivity.y, product1.u1) annotation(Line(visible = true, origin = {-67.75, 3}, points = {{-11.25, -3}, {2.75, -3}, {2.75, 3}, {5.75, 3}}, color = {0, 0, 127}));
+  connect(soilingAdd.y, product1.u2) annotation(Line(visible = true, origin = {-60.5, -23.662}, points = {{1.5, -15.338}, {4.5, -15.338}, {4.5, -2.325}, {-4.5, -2.325}, {-4.5, 17.662}, {-1.5, 17.662}}, color = {0, 0, 127}));
+  connect(const.y, shadingAdd.u1) annotation(Line(visible = true, origin = {-85.25, -66.5}, points = {{-3.75, 7.5}, {0.25, 7.5}, {0.25, -7.5}, {3.25, -7.5}}, color = {0, 0, 127}));
+  connect(const.y, soilingAdd.u2) annotation(Line(visible = true, origin = {-85.25, -52}, points = {{-3.75, -7}, {0.25, -7}, {0.25, 7}, {3.25, 7}}, color = {0, 0, 127}));
+  connect(DishArea.y, MirrorReflectivity.u) annotation(Line(visible = true, origin = {-105.5, 0}, points = {{-3.5, 0}, {3.5, 0}}, color = {0, 0, 127}));
+  connect(WallFlux.port, fluxToWall_port) annotation(Line(visible = true, origin = {134.077, -40}, points = {{-14.077, 0}, {14.077, 0}}, color = {191, 0, 0}));
+  connect(WallHit.y, WallFlux.Q_flow) annotation(Line(visible = true, origin = {90.5, -40}, points = {{-9.5, 0}, {9.5, 0}}, color = {0, 0, 127}));
+  connect(ReceiverFlux.port, fluxToReceiver_port) annotation(Line(visible = true, origin = {134.077, 0}, points = {{-14.077, 0}, {14.077, 0}}, color = {191, 0, 0}));
+  connect(RecieverHit.y, ReceiverFlux.Q_flow) annotation(Line(visible = true, origin = {90.5, 0}, points = {{-9.5, 0}, {9.5, 0}}, color = {0, 0, 127}));
+  connect(soilingConst.y, soilingAdd.u1) annotation(Line(visible = true, origin = {-100.25, -36.5}, points = {{-18.75, -3.5}, {0.25, -3.5}, {0.25, 3.5}, {18.25, 3.5}}, color = {0, 0, 127}));
+  connect(shadingConst.y, shadingAdd.u2) annotation(Line(visible = true, origin = {-92.75, -83}, points = {{-26.25, 3}, {7.75, 3}, {7.75, -3}, {10.75, -3}}, color = {1, 37, 163}));
+  annotation(Icon(coordinateSystem(extent = {{-100, -100}, {100, 100}}, preserveAspectRatio = true, initialScale = 0.1, grid = {10, 10}), graphics = {Rectangle(visible = true, lineColor = {128, 128, 128}, fillColor = {149, 23, 41}, fillPattern = FillPattern.Solid, lineThickness = 5, extent = {{-97, -97}, {97, 97}}, radius = 20), Ellipse(visible = true, origin = {16.151, -12.328}, rotation = 46.427, lineColor = {255, 255, 255}, fillColor = {255, 255, 255}, lineThickness = 3, extent = {{-95.948, -37.583}, {95.948, 37.583}}), Line(visible = true, origin = {-38.023, -1.49}, points = {{-48.534, 31.49}, {40.51, -52.981}, {8.023, 21.49}}, color = {255, 255, 255}, thickness = 1, arrow = {Arrow.None, Arrow.Filled}, arrowSize = 4), Line(visible = true, origin = {2.357, 40.542}, points = {{-32.357, 45.02}, {53.121, -38.306}, {-20.763, -6.715}}, color = {255, 255, 255}, thickness = 1, arrow = {Arrow.None, Arrow.Filled}, arrowSize = 5), Line(visible = true, origin = {-31.266, -27.185}, points = {{-11.266, 47.185}, {11.266, -47.185}}, color = {255, 255, 255}, thickness = 2.5), Line(visible = true, origin = {-10.322, 13.556}, points = {{-14.302, 13.556}, {14.302, -13.556}}, color = {255, 255, 255}, thickness = 2.5), Line(visible = true, origin = {27.484, 30.51}, points = {{-44.149, 11.525}, {44.149, -11.525}}, color = {255, 255, 255}, thickness = 2.5), Polygon(visible = true, origin = {-37.714, 37.621}, lineColor = {255, 255, 255}, fillColor = {255, 255, 255}, fillPattern = FillPattern.Solid, points = {{-19.493, 5.409}, {-19.493, -3.794}, {-5.565, -19.464}, {7.714, -17.621}, {17.714, -7.621}, {21.547, 5.409}, {4.633, 20.084}, {-7.057, 17.597}}), Line(visible = true, origin = {44.016, -48.272}, points = {{43.535, 88.272}, {43.535, 51.754}, {40.551, 33.597}, {34.333, 15.688}, {23.886, 0.267}, {5.984, -19.382}, {-4.016, -26.347}, {-16.408, -31.728}, {-36.057, -36.047}, {-54.016, -38.037}, {-81.326, -38.037}}, color = {255, 255, 255}, thickness = 2.5, smooth = Smooth.Bezier)}), Diagram(coordinateSystem(extent = {{-148.5, -105}, {148.5, 105}}, preserveAspectRatio = true, initialScale = 0.1, grid = {5, 5})));
+end ParabolicDish;
