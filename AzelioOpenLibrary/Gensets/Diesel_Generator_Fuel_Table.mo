@@ -2,11 +2,13 @@ within AzelioOpenLibrary.Gensets;
 
 model Diesel_Generator_Fuel_Table "Diesel Generator model"
   Modelica.Blocks.Interfaces.RealInput P_dem(unit = "W") "Power demand" annotation(Placement(visible = true, transformation(origin = {-151.696, 33.545}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-95, -50}, extent = {{-25, -25}, {25, 25}}, rotation = 0)));
-  Modelica.Blocks.Interfaces.RealInput FC_tab(unit = "l/h") "Fuel consumption from table" annotation(Placement(visible = true, transformation(origin = {117.14, 89.866}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-95, 50}, extent = {{-25, -25}, {25, 25}}, rotation = -720)));
-  Modelica.Blocks.Interfaces.RealInput P_Nom(unit = "W") "Diesel generator nominal power" annotation(Placement(visible = true, transformation(origin = {-122.411, 80.341}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {0, 95}, extent = {{-25, -25}, {25, 25}}, rotation = -810)));
+  //Modelica.Blocks.Interfaces.RealInput FC_tab(unit = "l/h") "Fuel consumption from table" annotation(Placement(visible = true, transformation(origin = {117.14, 89.866}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-95, 50}, extent = {{-25, -25}, {25, 25}}, rotation = -720)));
+  //Modelica.Blocks.Interfaces.RealInput P_Nom(unit = "W") "Diesel generator nominal power" annotation(Placement(visible = true, transformation(origin = {-122.411, 80.341}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {0, 95}, extent = {{-25, -25}, {25, 25}}, rotation = -810)));
+  parameter Real P_Nom(unit = "W") "Nominal genset power" annotation(Placement(visible = true, transformation(origin = {-155, -40}, extent = {{-20, -20}, {20, 20}}, rotation = 0), iconTransformation(origin = {-98.908, -15.426}, extent = {{-20, -20}, {20, 20}}, rotation = 0)));
   parameter Real min_load "Minimum disel generator load as fraction of nominal capacity";
   parameter Real rho_D(unit = "kg/m3", nominal = 832.0) = 832.0 "Diesel density";
   parameter Real LHV_D(unit = "MJ/kg", nominal = 43.1) = 43.1 "Diesel Lower Heating Value";
+  Real k(unit = "1") "Power coefficient to determine fuel consumption";
   Real FC(unit = "l/s") "Fuel consumption";
   Real FC_tot(unit = "l") "Annual fuel consumption";
   Real P_out(unit = "kW") "Power output";
@@ -14,14 +16,18 @@ model Diesel_Generator_Fuel_Table "Diesel Generator model"
   Real P_min(unit = "kW") "Minimum allowed power";
   Real spec_cons(unit = "l/J") "Specific consumption";
   Real eta_DG "Diesel generator efficiency";
+  Modelica.Blocks.Tables.CombiTable1Ds FC_tab(table = {{0, 33.9 / 3600}, {0.25, 33.9 / 3600}, {0.5, 59.9 / 3600}, {0.75, 84.0 / 3600}, {1.0, 106.6 / 3600}}) annotation(Placement(visible = true, transformation(origin = {1.491, -1.491}, extent = {{-21.491, -21.491}, {21.491, 21.491}}, rotation = 0)));
 equation
+  P_dem / P_Nom = k;
+  k = FC_tab.u;
+  FC_tab.y[1] = FC;
   P_min = min_load * P_Nom;
   if noEvent(P_dem <= P_min) then
     P_out = P_min;
   else
     P_out = P_dem;
   end if;
-  FC = FC_tab;
+  //FC = FC_tab;
   spec_cons = FC / P_out;
   FC = der(FC_tot);
   P_out = der(E_out);
