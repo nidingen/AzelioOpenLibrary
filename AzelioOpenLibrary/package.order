@@ -1,9 +1,9 @@
-PowerCycles
+PowerCycleModels
 LossModels
-Thermal
+ThermalModels
 EnergyStorage
-Electrical
-Optical
+ElectricalModels
+OpticalModels
 WindTurbines
 Gensets
 Examples
