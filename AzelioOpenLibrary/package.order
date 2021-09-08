@@ -1,11 +1,11 @@
-PowerCycleModels
+PowerCycles
 LossModels
-ThermalModels
-ElectricalModels
-OpticalModels
+Thermal
+EnergyStorage
+Electrical
+Optical
 WindTurbines
 Gensets
-Tests
+Examples
 Icons
 Utilities
-EnergyStorage
