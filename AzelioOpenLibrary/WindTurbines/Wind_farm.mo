@@ -7,16 +7,19 @@ model Wind_farm
   parameter Real CWS "Crosswind spacing/Turbine diameter";
   parameter Real N_WT "Number of wind turbines";
   Real AL "Array losses", a1, a2, a3, a4;
-  Modelica.Blocks.Interfaces.RealOutput E_WF(unit = "MWh") annotation(Placement(visible = true, transformation(origin = {219.297, 41.798}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, 50}, extent = {{-20, -20}, {20, 20}}, rotation = -360)));
+  Modelica.Blocks.Interfaces.RealOutput E_WF(unit = "J") annotation(Placement(visible = true, transformation(origin = {219.297, 41.798}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, 50}, extent = {{-20, -20}, {20, 20}}, rotation = -360)));
   Modelica.Blocks.Interfaces.RealOutput P_WF(unit = "W") annotation(Placement(visible = true, transformation(origin = {193.553, 56.63}, extent = {{-10, -10}, {10, 10}}, rotation = 0), iconTransformation(origin = {100, -50}, extent = {{-20, -20}, {20, 20}}, rotation = -360)));
-algorithm
-  a1 := (-0.026 * turb) - 0.0212;
-  a2 := 0.565 * turb + 0.6829;
-  a3 := (-3.818 * turb) - 7.2651;
-  a4 := (-22.06 * turb) - 33.893;
 equation
+  a1 = (-0.026 * turb) - 0.0212;
+  a2 = 0.565 * turb + 0.6829;
+  a3 = (-3.818 * turb) - 7.2651;
+  a4 = (-22.06 * turb) - 33.893;
   AL = (a1 * CWS ^ 3 + a2 * CWS ^ 2 + a3 * CWS + a4) / 100;
-  E_WF = (1 - AL) * N_WT * Modelica.SIunits.Conversions.to_kWh(E_WT) / 1000;
+  if noEvent(N_WT > 0) then
+    E_WF = (1 - AL) * N_WT * E_WT;
+  else
+    E_WF = 0;
+  end if;
   P_WF = der(E_WF);
   annotation(Documentation(info = "<html><p>This block simulates the power and energy output (<em>P<sub>WF</sub>, E<sub>WF</sub></em>) of a windfarm, by accounting for array losses [1, 2].&nbsp;</p>
 <p><em>E<sub>WF</sub> = (1-AL)&nbsp;&middot; N<sub>WT</sub>&nbsp;&middot; E<sub>WT</sub></em></p>
