@@ -6,7 +6,7 @@ If used in any publication (academic, commercial, non-profit or private) the nam
 
 Download/clone and run.
 
-The library contains simplified models of a Stirling engine and a latent heat thermal storage (TES) [1]. The core power unit is a model of Azelio's in-house Stirling engine working gas channel [2], while the the thermal energy storage is a 0D latent heat thermal storage model. Auxiliary components required to build a complete system are included, such as generator, cooling system, heat resistance, generic loss model, wind turbine and pv panel. Several example systems are included.
+The library contains simplified models of a Stirling engine and a latent heat thermal storage (TES) [1]. The core power unit is a model of Azelio's in-house Stirling engine working gas channel 8.6.19 [2], while the the thermal energy storage is a 0D latent heat thermal storage model. Auxiliary components required to build a complete system are included, such as generator, cooling system, heat resistance, generic loss model, wind turbine and pv panel. Several example systems are included.
 
 The library allows anyone to get started in modelling of energy systems with Stirling engines and latent heat thermal energy storages.
 
